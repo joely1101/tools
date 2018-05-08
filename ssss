@@ -1,0 +1,4 @@
+systemctl -a | grep "devst\|open\|dpdk"
+echo "============huge==================="
+grep -i huge /proc/meminfo
+
