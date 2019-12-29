@@ -1,6 +1,7 @@
 NS_RC=$1
 docker ps -q | xargs docker inspect --format '{{.State.Pid}}{{.Name}}' > ./nlist
 LINE=`cat ./nlist | wc -l`
+mkdir -p /var/run/netns
 i=1;
 for d in `cat ./nlist`;do
     if [ "$NS_RC" = "getns" ];then
