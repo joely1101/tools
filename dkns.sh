@@ -7,7 +7,6 @@ fi
 TMPFILE=/tmp/nslist.tmp
 NS_RC=$1
 docker ps -q | xargs docker inspect --format '{{.State.Pid}}{{.Name}}' > ${TMPFILE}
-LINE=`cat ./nlist | wc -l`
 mkdir -p /var/run/netns
 i=1;
 for d in `cat ${TMPFILE}`;do
