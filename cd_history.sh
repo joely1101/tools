@@ -12,10 +12,15 @@ dc_add()
     else
         dirp=`realpath $1`
     fi
+    for((i=0;i<MAXHISTORY;i++))
+    do
+	if [ "${DL_LIST[i]}" = "$dirp" ];then
+	    #echo "not add ${DL_LIST[i]}"
+            return
+        fi
+
+    done
     idx=${2:-$DL_INDEX}
-    if [ "${DL_LIST[idx]}" = "$dirp" ];then
-        return
-    fi
     #do not log home
     if [ "${HOME}" = "${dirp}" ];then
         return
@@ -74,17 +79,33 @@ mycd()
 {
     if [ "$1" == "-s" ]; then
         dc_list
+	return
     elif [ "$1" == "-c" ]; then
         dc_clean
+	return
     elif [[ "$1" =~ ^-[0-9]+$ ]]; then
         dc_jump $1
+	return
+    elif [[ "$1" =~ (\.\.[\.]+)$ ]];then
+	len=${#1}
+        up="."
+        for ((i=0;i<len-1;i++))
+        do
+            up="${up}/.."
+        done
+	builtin cd $up
+    elif [[ "$1" =~ ([,]+)$ ]];then
+        len=${#1}
+        up="."
+        for ((i=0;i<len;i++))
+        do
+            up="${up}/.."
+        done
+        builtin cd $up
     else
-        local cpwd=$PWD
         builtin cd $1
-        if [ "$cpwd" != "$PWD" ];then
-            dc_add $PWD
-        fi
     fi
+    dc_add $PWD
 }
 
 
