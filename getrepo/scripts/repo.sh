@@ -4,9 +4,11 @@
 [ -z "$BUILD_TOP" ] && BUILD_TOP=.
 #CONFIG=${BUILD_TOP}/repo.config
 . $BUILD_TOP/scripts/cmd.head.sh
+cache_dir=~/.mygitcache
+mkdir -p $cache_dir
+
 cmd_clone()
 {
-   mkdir -p /tmp/gitcache
    CONFIG=$2
    [ -z "$1" ] && error_out "Invalid parameter"
    [ -z "$2" ] && error_out "Invalid parameter"
@@ -25,7 +27,7 @@ cmd_clone()
    mkdir -p `basename $target`
    #branch is tag/commitid/branch
    URLMD5=`echo $repourl | md5sum | cut -f1 -d" "`
-   cache_dir=/tmp/gitcache/${URLMD5}
+   cache_dir=${cache_dir}/${URLMD5}
    if [ ! -d ${cache_dir} ];then
        do_cmd "git clone ${repourl} ${cache_dir}"
    fi
@@ -56,7 +58,6 @@ get_by_var()
 }
 cmd_get()
 {
-   mkdir -p /tmp/gitcache
    CONFIG=$2
    [ -z "$1" ] && error_out "Invalid parameter"
    if [ ! -f "$CONFIG" ];then
