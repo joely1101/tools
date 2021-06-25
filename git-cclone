@@ -1,5 +1,4 @@
 #!/bin/bash
-:<<COMMENT
 #this is have some issue, use alias clone = cclone to redirect clone.
 pname=`basename $0`
 if [ "$pname" = "git" ];then
@@ -19,7 +18,6 @@ fi
 #echo "\e[0;33m Using fast clone \e[0m"
 #echo "Using fast clone"
 #echo "command: $@"
-COMMENT
 
 cache_path=~/.mygitcache
 gitapp=git
