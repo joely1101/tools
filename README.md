@@ -1,5 +1,18 @@
 ```
 # tools
+git-cclone: put it in /usr/lib/git-core/  , and you can use git cclone ssh://xxx.xxx.xxx/yorrepo.git
+time git cclone https://github.com/torvalds/linux.git linux
+real    8m20.159s
+user    8m36.355s
+sys     1m21.557s
+
+time git cclone https://github.com/torvalds/linux.git linux2
+real    0m7.436s
+user    0m4.271s
+sys     0m2.339s
+
+
+
 ipns.sh: exec ip netns by select netns
 dkns.sh: select docker name and re-create ip ns, then can list net
 
