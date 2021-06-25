@@ -13,8 +13,9 @@ if [ "$pname" = "git" ];then
     exit 0
 fi
 
-echo "Using fast clone"
-echo "command: $@"
+#echo "\e[0;33m Using fast clone \e[0m"
+#echo "Using fast clone"
+#echo "command: $@"
 
 cache_path=~/.mygitcache
 gitapp=git
@@ -83,6 +84,7 @@ ref_name_full="${cache_path}/${git_name}-${URLMD5}"
 
 if [ ! -d ${ref_name_full} ];then
 #    echo "cache ${REPO} to ${ref_name_full}"
+    echo -e "\e[0;33m cache ${git_name} to ${ref_name}\e[0m"
     $git_clone --progress ${REPO} ${ref_name_full}
 fi
 if [ "$BRANCH" != "" ];then
@@ -94,7 +96,7 @@ if [ "$RCV_SMODULE" = "1" ];then
 #    echo "$gitapp clone -C ${ref_name_full} submodule update --reference $REFERENCE"
     $gitapp -C ${ref_name_full} submodule update
 fi
-
+echo -e "\e[0;33m clone by reference $ref_name\e[0m"
 $git_clone --reference-if-able $ref_name_full $all_argv
 
 
