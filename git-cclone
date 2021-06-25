@@ -1,13 +1,28 @@
 #!/bin/bash
+pname=`basename $0`
+if [ "$pname" = "git" ];then
+#    echo "redirect to real git"
+    all="$@"
+    echo $all | grep -q "clone "
+    if [ "$?" != "0" ] ;then
+        new="$@"
+    else
+        new=${all/clone /cclone }
+    fi
+    /usr/bin/git $new
+    exit 0
+fi
+
 echo "Using fast clone"
+echo "command: $@"
 
 cache_path=~/.mygitcache
 gitapp=git
 git_clone=/usr/lib/git-core/git-clone
 all_argv="$@"
 if [ $# -eq 0 ];then
-    $git_clone-h
-    return
+    $git_clone -h
+    exit 0    
 fi
 
 if [ "$1" = "clean" ];then
@@ -20,14 +35,6 @@ if [ "$1" = "clean" ];then
 	ls ${cache_path}
    fi
    exit 0   
-fi
-if [ $# -gt 1 ];then
-    last2=$(($# - 1))
-    eval DIR='$'$#
-    eval REPO='$'$last2
-else
-    DIR=$1
-    REPO=""
 fi
 
 while [[ $# -gt 0 ]]; do
@@ -48,37 +55,24 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     *)    # unknown option
+      echo $key | grep -q "^http://\|^ssh://\|^https://"
+      if [ "$?" = "0" ];then
+          REPO=$key
+      fi
       shift # past argument
       ;;
   esac
 done
-del_argv=0
 
 if [ ! -z "$REFERENCE" ];then
         $git_clone $@
-        return
+	exit 0
 fi
 
-echo $REPO | grep -q "^http://\|^ssh://\|^https://"
-if [ "$?" = "0" ];then
-    del_argv=2
-#    echo "have dir and repo"
-fi
-
-echo $DIR | grep -q "^http://\|^ssh://\|^https://"
-if [ "$?" = "0" ];then
-	#not assigned the directory
-	REPO=$DIR
-	DIR=`basename $REPO`
-	DIR=${DIR%.git}
-	del_argv=1
-	#echo "no dir $DIR $REPO"
-fi
-
-if [ "$del_argv" = "0" ];then
+if [ -z "$REPO" ];then
 #    echo "can NOT know repo url, no cache"
     git clone $all_argv
-    return 
+    exit 0
 fi
 
 git_name=`basename $REPO`
@@ -86,7 +80,6 @@ git_name=${git_name%.git}
 URLMD5=`echo $repourl | md5sum | cut -f1 -d" "`
 ref_name="${cache_path}/${git_name}-${URLMD5}"
 ref_name_full="${cache_path}/${git_name}-${URLMD5}"
-#echo "$REPO $ref_name $DIR"
 
 if [ ! -d ${ref_name_full} ];then
 #    echo "cache ${REPO} to ${ref_name_full}"
@@ -101,8 +94,6 @@ if [ "$RCV_SMODULE" = "1" ];then
 #    echo "$gitapp clone -C ${ref_name_full} submodule update --reference $REFERENCE"
     $gitapp -C ${ref_name_full} submodule update
 fi
-
-#echo "$REPO $DIR $BRANCH $REFERENCE"
 
 $git_clone --reference-if-able $ref_name_full $all_argv
 
