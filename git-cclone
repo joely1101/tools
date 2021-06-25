@@ -1,4 +1,6 @@
 #!/bin/bash
+:<<COMMENT
+#this is have some issue, use alias clone = cclone to redirect clone.
 pname=`basename $0`
 if [ "$pname" = "git" ];then
 #    echo "redirect to real git"
@@ -9,6 +11,7 @@ if [ "$pname" = "git" ];then
     else
         new=${all/clone /cclone }
     fi
+#    echo -e "\e[0;43m git $new \e[0m"
     /usr/bin/git $new
     exit 0
 fi
@@ -16,6 +19,7 @@ fi
 #echo "\e[0;33m Using fast clone \e[0m"
 #echo "Using fast clone"
 #echo "command: $@"
+COMMENT
 
 cache_path=~/.mygitcache
 gitapp=git
@@ -78,7 +82,7 @@ fi
 
 git_name=`basename $REPO`
 git_name=${git_name%.git}
-URLMD5=`echo $repourl | md5sum | cut -f1 -d" "`
+URLMD5=`echo $REPO | md5sum | cut -f1 -d" "`
 ref_name="${cache_path}/${git_name}-${URLMD5}"
 ref_name_full="${cache_path}/${git_name}-${URLMD5}"
 
