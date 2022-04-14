@@ -1,0 +1,30 @@
+1.add new new user "runner"
+2.install ezbuild
+
+1.install gitlab-runner
+export arch=amd64
+curl -LJO "https://gitlab-runner-downloads.s3.amazonaws.com/latest/deb/gitlab-runner_${arch}.deb"
+dpkg -i gitlab-runner_<arch>.deb
+#install service, assume the run user is "runner"
+mkdir -p /home/runner/gitlab-runner
+touch /home/runner/.gitlab-runner/config.toml
+sudo gitlab-runner install -d /home/runner/gitlab-runner/workspace -c /home/runner/.gitlab-runner/config.toml --user runner
+sudo systemctl status gitlab-runner
+
+#register new runner to git repo
+#see go to gitlab project->setting->CI/CD->runner to get token
+#--env pass env to shell. need /home/runner/.local/bin for ezbuild
+export TOKEN=token_from_web
+gitlab-runner register -n \
+--name ezbuild-sh \
+-u https://192.168.193.xx/ \
+-r $TOKEN \
+--executor shell \
+--run-untagged \
+--tls-ca-file=$PWD/certs/server.crt \
+--env "PATH=/home/runner/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+ 
+
+#remove runner
+gitlab-runner ls
+gitlab-runner unregister -n ubuntu-joel2
