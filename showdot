@@ -1,0 +1,26 @@
+#/bin/bash
+outfile=$1
+dot_per_line=${2:-20}
+while true
+do
+    read -t 3 -r line
+    ret=$?
+    if [[ $ret -gt 128 ]] ; then
+            echo -n "#"
+    elif [[ $ret -eq 0 ]];then
+            cc=$((cc+1))
+            cc=$((cc%dot_per_line))
+
+            #echo -n $cc
+            [ $cc -eq 0 ] && echo -n "."
+            #echo "$line"
+            echo "$line" >>$outfile
+    else
+            break
+    fi
+
+done
+
+#when done show last 30 line messahe
+echo "last 50 lines output!!"
+tail -n 50 $outfile
