@@ -98,6 +98,8 @@ if [ "$RCV_SMODULE" = "1" ];then
 #    echo "$gitapp clone -C ${ref_name_full} submodule update --reference $REFERENCE"
     $gitapp -C ${ref_name_full} submodule update
 fi
+echo "update reference $ref_name_full"
+/usr/bin/git -C $ref_name_full pull
 echo -e "\e[0;33m clone by reference $ref_name\e[0m"
 $git_clone --reference-if-able $ref_name_full $all_argv
 
